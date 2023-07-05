@@ -1,0 +1,207 @@
+/*
+  Autores:
+  - Arthur Queiroz
+  - Victor Menezes Ferreira
+  - Gabriel Antônio Sereia
+  - Felipe Lima de Miranda Pardauil
+  - Matheus Artur Uller Menozzo
+*/
+
+#include <iostream>
+#include <locale.h>
+#include <time.h> // Habilita a função time
+
+using namespace std;
+
+#define tam 9
+
+int main() {
+  setlocale(LC_ALL, "Portuguese");
+  srand(time(NULL)); // Semente para gerar valores aleatórios
+
+  // Matriz fixa principal 9x9:
+  int matrizPrincipal[tam][tam] = {
+      4, 9, 5, 2, 8, 7, 3, 6, 1, 7, 2, 8, 6, 1, 3, 4, 9, 5, 3, 6, 1,
+      9, 5, 4, 7, 2, 8, 6, 5, 3, 8, 4, 9, 2, 1, 7, 9, 8, 4, 1, 7, 2,
+      6, 5, 3, 2, 1, 7, 5, 3, 6, 9, 8, 4, 1, 3, 2, 4, 6, 5, 8, 7, 9,
+      5, 4, 6, 7, 9, 8, 1, 3, 2, 8, 7, 9, 3, 2, 1, 5, 4, 6};
+
+  int menu = 1, i, j, nmr, input, sorteio, matrizGabarito[tam][tam] = {0},
+      matrizJogo[tam][tam] = {0}, fim = 0;
+
+  // Menu do jogo
+  do {
+    cout << "\n1-Jogar";
+    cout << "\n2-Sobre";
+    cout << "\n3-Fim\n";
+    cin >> input;
+
+    switch (input) {
+    case 1:            // Inicia o jogo
+      system("clear"); // Limpa o terminal
+
+      // Gerando a matriz gabarito:
+      sorteio = rand() % 4 + 1; // sorteando um número de 1 à 4
+
+      if (sorteio == 1) { // caso 1 matriz gabarito é igual matriz principal
+        for (int i = 0; i < tam; i++) {
+          for (int j = 0; j < tam; j++) {
+            matrizGabarito[i][j] = matrizPrincipal[i][j];
+          }
+        }
+      }
+
+      if (sorteio ==
+          2) { // caso 2 matriz gabarito será a transposta da matriz principal
+        for (int i = 0; i < tam; i++) {
+          for (int j = 0; j < tam; j++) {
+            matrizGabarito[i][j] = matrizPrincipal[j][i];
+          }
+        }
+      }
+
+      if (sorteio == 3) { // caso 3 matriz gabarito troca linhas com a principal
+        for (int i = 0; i < tam; i++) {
+          for (int j = 0; j < tam; j++) {
+            matrizGabarito[8 - i][j] = matrizPrincipal[i][j];
+          }
+        }
+      }
+
+      if (sorteio == 4) { // caso 4 gabarito troca colunas com a principal
+        for (int i = 0; i < tam; i++) {
+          for (int j = 0; j < tam; j++) {
+            matrizGabarito[i][8 - j] = matrizPrincipal[i][j];
+          }
+        }
+      }
+
+      // Gerando a matriz jogo de acordo com o sorteio:
+      for (int i = 0; i < tam; i++) {
+        for (int j = 0; j < tam; j++) {
+          matrizJogo[i][j] = matrizGabarito[i][j];
+        }
+      }
+
+      // Zera a matriz de forma aleatória
+      for (int contador = 0; contador < 1; contador++) {
+        i = rand() % 9; // numeros de 0 a 8 para a posição i da matriz
+        j = rand() % 9; // numeros de 0 a 8 para a posição j da matriz
+
+        if (matrizJogo[i][j] != 0) { // se a posição for 0, não entra
+          matrizJogo[i][j] = 0;
+        } else {
+          contador--; // caso a posição seja zero, o contador continue igual
+        }
+      }
+
+      // IMPRIME JOGO
+      do {
+        int numerosCorretos = 0;
+
+        for (i = 0; i < 9; i++) { 
+          for (j = 0; j < 9; j++) {
+            if (matrizJogo[i][j] == 0) {
+              cout << "x"
+                   << " \t";
+            } else {
+              cout << matrizJogo[i][j] << " \t";
+            }
+          }
+          cout << endl;
+        }
+
+        cout << "\nDigite a posição ij para preencher: \n";
+        cout << "Posição i: \n";
+        cin >> i;
+        cout << "Posição j: \n";
+        cin >> j;
+        cout << "Digite o número: \n";
+        cin >> nmr;
+
+        i--;
+        j--;
+
+        if (i < 0 || i > 8 || j < 0 || j > 9) { // consistencia da
+                                                // posição
+          system("clear");
+          cout << "Posição inválida, tente novamente. " << endl;
+        }
+        if (nmr > 9 || nmr < 1) { // consistencia do número
+          system("clear");
+          cout << "Numero inválido, tente novamente. " << endl;
+        }
+
+        if (matrizJogo[i][j] == 0) { // se a posição não está preenchida
+          if (matrizGabarito[i][j] == nmr) { // Se o numero digitado, é igual ao
+                                             // valor da matriz gabarito.
+            matrizJogo[i][j] = nmr;
+            system("clear");
+          } else { // Se não for igual ao valor da matriz gabarito.
+            system("clear");
+            cout << "Número na posição errada, tente novamente. " << endl;
+            cout << "\n";
+          }
+        } else { // se a posição já está preenchida
+          system("clear");
+          cout << "Posição já preenchida, tente novamente. " << endl << endl;
+        }
+
+        // Validando quais valores estão corretos.
+        for (int i = 0; i < 9; i++) {
+          for (int j = 0; j < 9; j++) {
+            if (matrizJogo[i][j] == matrizGabarito[i][j]) {
+              numerosCorretos++;
+            }
+          }
+        }
+
+        if (numerosCorretos >= 81) {
+          fim = 1;
+        }
+      } while (fim == 0);
+
+      // Mensagem para matriz preenchida:
+      system("clear");
+      cout << "Parabens você venceu. " << endl;
+
+      cout << "Matriz Final: \n";
+      for (int i = 0; i < tam; i++) {
+        for (int j = 0; j < tam; j++) {
+          cout << matrizJogo[i][j] << " \t";
+        }
+        cout << endl;
+      }
+
+      break;
+
+    case 2:            // Caso escolha sobre
+      system("clear"); // Limpa o terminal
+
+      cout << "Equipe de desenvolvimento: \n";
+      cout << "- Arthur Queiroz.\n";
+      cout << "- Victor Menezes Ferreira.\n";
+      cout << "- Gabriel Antônio Sereia.\n";
+      cout << "- Felipe Lima de Miranda Pardauil.\n";
+      cout << "- Matheus Artur Uller Menozzo. \n";
+      cout << "Mês/Ano: Junho/2023.\n";
+      cout << "Professor: Rafael Ballottin Martins.\n";
+      cout << "Disciplina: Algoritmos e Programação I.\n" << endl;
+
+      break;
+
+    case 3:            // Caso escolha sair
+      menu = 0;        // Define o valor do menu para 0 para terminar o programa
+      system("clear"); // Limpa o terminal
+
+      break;
+
+    default:
+      system("clear"); // Limpar o terminal
+      cout << "Opção inválida. Por favor, tente novamente.\n";
+
+      break;
+    }
+
+  } while (menu == 1);
+}
